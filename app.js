@@ -22,6 +22,9 @@ app.use("/api", allRoutes);
 const productRouter = require("./routes/products-list.routes");
 app.use("/api", productRouter);
 
+const cartRouter = require("./routes/cart.routes");
+app.use("/api", isAuthenticated, cartRouter);
+
 /*const taskRouter = require("./routes/task.routes");
 app.use("/api", isAuthenticated, taskRouter); */
 

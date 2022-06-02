@@ -28,8 +28,8 @@ const userSchema = new Schema({
   },
 
   cart: {
-    type: Array,
-    default: [],
+    type: Schema.Types.ObjectId,
+    ref: "Cart",
   },
 });
 

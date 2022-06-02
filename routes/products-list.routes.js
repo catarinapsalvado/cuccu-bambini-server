@@ -57,19 +57,24 @@ router.get("/products-list/:productId", (req, res, next) => {
     );
 });
 
-let productToUpdate;
-
 router.put("/products-list/:productId", (req, res, next) => {
-  const { id } = req.params;
+  const { productId } = req.params;
   const { name, price, description, image, category, available } = req.body;
+  let productToUpdate = {
+    name,
+    price,
+    description,
+    image,
+    category,
+    available,
+  };
+  Product.findByIdAndUpdate(productId, productToUpdate, { new: true })
 
-  Product.findByIdAndUpdate(id, productToUpdate, { new: true })
     .then((modifiedProduct) => {
       res.status(200).json(modifiedProduct);
-      return modifiedProduct;
     })
     .catch((err) => {
-      if (id === undefined) {
+      if (productId === undefined) {
         res.status(400).json({ message: "Invalid ID supplied" });
       } else if (!modifiedProduct) {
         res.status(404).json({ message: "Product not found" });
@@ -79,16 +84,16 @@ router.put("/products-list/:productId", (req, res, next) => {
     });
 });
 
-/* router.delete("/products-list/:productId", (req, res, next) => {
+router.delete("/products-list/:productId", (req, res, next) => {
   const { productId } = req.params;
   //console.log(req.params);
 
-  Product.findByIdAndRemove({ productId })
+  Product.findByIdAndRemove(productId)
 
     .then((response) => {
       res.status(200).json(response);
     })
     .catch((err) => res.status(400).json({ message: "Error message" }));
 });
- */
+
 module.exports = router;
