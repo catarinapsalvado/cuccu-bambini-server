@@ -1,4 +1,5 @@
 const router = require("express").Router();
+const Cart = require("../models/Cart.model");
 
 const jwt = require("jsonwebtoken");
 
@@ -66,9 +67,20 @@ router.post("/signup", (req, res) => {
         });
       })
       .then((user) => {
-        // Bind the user to the session object
-        res.status(201).json(user);
+        return Cart.create({ owner: user._id });
       })
+      .then((createdCart) => {
+        return User.findByIdAndUpdate(
+          createdCart.owner,
+          { cart: createdCart._id },
+          { new: true }
+        );
+      })
+
+      .then((updatedUser) => {
+        res.status(201).json(updatedUser);
+      })
+
       .catch((error) => {
         if (error instanceof mongoose.Error.ValidationError) {
           return res.status(400).json({ errorMessage: error.message });

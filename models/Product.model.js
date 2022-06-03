@@ -18,13 +18,11 @@ const productSchema = new Schema({
 
   size: {
     type: String,
-    required: true,
   },
 
   brand: {
     type: String,
   },
-
 
   image: {
     type: String,
