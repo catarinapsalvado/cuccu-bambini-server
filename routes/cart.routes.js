@@ -18,32 +18,13 @@ router.get("/cart", isAuthenticated, (req, res, next) => {
     .catch((err) => res.status(400).json({ err }));
 });
 
-/* // Create one cart just to test
-router.post("/create-cart", (req, res, next) => {
-  console.log(req.body);
-  const { name, price, image, size, brand } = req.body;
+router.put("/cart/:productId", (req, res, next) => {
+  const { cart } = req.payload;
+  const { productId } = req.params;
 
-  Cart.create({
-    product,
-    owner,
-  })
-    .then((newCart) => {
-      return res.status(200).json(newCart);
-    })
-    .catch((err) =>
-      res.status(400).json({ message: "No Products were created" })
-    );
-});
- */
-
-//  Insert new  information to the DB
-
-router.post("/cart/:productId", (req, res, next) => {
-  const { _id, name, price, image, size, brand } = req.payload;
-  const { product, owner } = req.params;
-  User.findByIdAndUpdate(_id, { $push: { cart: { _id } } }, { new: true })
-    .then((addedProduct) => {
-      return res.status(200).json(addedProduct);
+  Cart.findByIdAndUpdate(cart, { $push: { product: productId } }, { new: true })
+    .then((updatedCart) => {
+      return res.status(200).json(updatedCart);
     })
     .catch((err) =>
       res.status(400).json({ message: "No Products were added to the cart" })
@@ -51,28 +32,18 @@ router.post("/cart/:productId", (req, res, next) => {
 });
 
 //delete
-router.delete("/cart/:productId", (req, res, next) => {
-  const { _id } = req.payload;
+router.put("/cart/remove/:productId", (req, res, next) => {
+  const { cart } = req.payload;
   const { productId } = req.params;
-  //console.log(req.params);
+  console.log(cart, productId);
 
-  User.findByIdAndRemove(productId)
-
-    .then((response) => {
-      res.status(200).json(response);
+  Cart.findByIdAndUpdate(cart, { $pull: { product: productId } }, { new: true })
+    .then((updatedCart) => {
+      return res.status(200).json(updatedCart);
     })
-    .catch((err) => res.status(400).json({ message: "Error message" }));
-});
-
-router.get("/cart/checkout", (req, res, next) => {
-  const { _id } = req.payload;
-  const { product, owner } = req.body;
-  User.findById(_id)
-    .populate("cart")
-    .then((user) => {
-      res.status(200).json(user.cart);
-    })
-    .catch((err) => res.status(400).json({ err }));
+    .catch((err) =>
+      res.status(400).json({ message: "No Products were added to the cart" })
+    );
 });
 
 module.exports = router;
