@@ -15,29 +15,45 @@ router.get("/products-list", (req, res, next) => {
 });
 
 //Create
-router.post("/create-product", (req, res, next) => {
-  console.log(req.body);
-  const { name, price, description, image, category, available } = req.body;
+router.post(
+  "/create-product",
+  fileUploader.single("image"),
+  (req, res, next) => {
+    console.log(req.body);
+    const { name, price, size, description, image, brand, category, available } = req.body;
 
-  Product.create({
-    name,
-    price,
-    description,
-    image,
-    category,
-    available,
-  })
-    .then((newProduct) => {
-      return res.status(200).json(newProduct);
-    })
-    .catch((err) =>
-      res.status(400).json({ message: "No Products were created" })
-    );
+/* 
+    if (!req.file) {
+      next(new Error("No file uploaded!"));
+      return;
+    }
+
+      
+  res.json({ fileUrl: req.file.path });
 });
+ */
+    Product.create({
+      name,
+      price,
+      size,
+      description,
+      brand,
+      image: req.file.path,
+      category,
+      available,
+    })
+      .then((newProduct) => {
+        return res.status(200).json(newProduct);
+      })
+      .catch((err) =>
+        res.status(400).json({ message: "No Products were created" })
+      );
+  }
+);
 
 router.get("/products-list/:category", (req, res, next) => {
   const { category } = req.params;
-  Product.find({ category: category })
+  Product.find({ category: { $regex: category, $options: "i" } })
     .then((searchedProduct) => {
       res.status(200).json(searchedProduct);
     })
@@ -57,14 +73,16 @@ router.get("/products-list/:productId", (req, res, next) => {
     );
 });
 
-router.put("/products-list/:productId", (req, res, next) => {
+router.put("/products-list/:productId", fileUploader.single("image"), (req, res, next) => {
   const { productId } = req.params;
-  const { name, price, description, image, category, available } = req.body;
+  const { name, price, size, description, image, brand,category, available } = req.body;
   let productToUpdate = {
     name,
     price,
+    size,
     description,
-    image,
+    image:req.file.path,
+    brand,
     category,
     available,
   };

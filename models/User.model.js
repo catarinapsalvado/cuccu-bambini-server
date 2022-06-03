@@ -31,6 +31,10 @@ const userSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: "Cart",
   },
+
+  payment: {
+    type: String,
+  },
 });
 
 const User = model("User", userSchema);
