@@ -48,7 +48,7 @@ router.post(
   }
 );
 
-router.get("/products-list/:category", (req, res, next) => {
+router.get("/products-list/category/:category", (req, res, next) => {
   const { category } = req.params;
   Product.find({ category: { $regex: category, $options: "i" } })
     .then((searchedProduct) => {
