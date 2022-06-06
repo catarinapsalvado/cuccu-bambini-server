@@ -59,9 +59,9 @@ router.get("/products-list/category/:category", (req, res, next) => {
     );
 });
 
-router.get("/products-list/:productId", (req, res, next) => {
+router.get("/products-list/:id", (req, res, next) => {
   const { id } = req.params;
-  Product.find({ productId: id })
+  Product.findById( id )
     .then((detailsProduct) => {
       res.status(200).json(detailsProduct);
     })
@@ -71,7 +71,7 @@ router.get("/products-list/:productId", (req, res, next) => {
 });
 
 router.put(
-  "/products-list/:productId",
+  "/products-list/:productId/",
   fileUploader.single("image"),
   (req, res, next) => {
     const { productId } = req.params;

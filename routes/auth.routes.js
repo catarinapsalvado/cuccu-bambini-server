@@ -21,7 +21,7 @@ router.get("/verify", isAuthenticated, (req, res, next) => {
 });
 
 router.post("/signup", (req, res) => {
-  const { email, username, password } = req.body;
+  const { email, username, password, role } = req.body;
 
   if (!username) {
     return res
@@ -51,7 +51,7 @@ router.post("/signup", (req, res) => {
   User.findOne({ email }).then((found) => {
     // If the user is found, send the message username is taken
     if (found) {
-      return res.status(400).json({ errorMessage: "Username already taken." });
+      return res.status(400).json({ errorMessage: "Email already taken." });
     }
 
     // if user is not found, create a new user - start with hashing the password
@@ -64,6 +64,7 @@ router.post("/signup", (req, res) => {
           email,
           username,
           password: hashedPassword,
+          role,
         });
       })
       .then((user) => {
