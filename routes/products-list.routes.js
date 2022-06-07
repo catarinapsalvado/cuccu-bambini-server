@@ -85,12 +85,18 @@ router.put(
       category,
       available,
     } = req.body;
+
+    let noImage;
+    if (req.file) {
+      image = req.file.path;
+    }
+
     let productToUpdate = {
       name,
       price,
       size,
       description,
-      image: req.file.path,
+      image: noImage,
       brand,
       category,
       available,
