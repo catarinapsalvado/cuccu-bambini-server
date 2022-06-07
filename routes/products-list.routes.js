@@ -14,6 +14,14 @@ router.get("/products-list", (req, res, next) => {
     );
 });
 
+router.post("/upload", fileUploader.single("image"), (req, res, next) => {
+  if (!req.file) {
+    next(new Error("No file uploaded!"));
+    return;
+  }
+  res.json({ fileUrl: req.file.path });
+});
+
 //Create
 router.post(
   "/create-product",
@@ -61,7 +69,7 @@ router.get("/products-list/category/:category", (req, res, next) => {
 
 router.get("/products-list/:id", (req, res, next) => {
   const { id } = req.params;
-  Product.findById( id )
+  Product.findById(id)
     .then((detailsProduct) => {
       res.status(200).json(detailsProduct);
     })
