@@ -24,18 +24,11 @@ router.post("/upload", fileUploader.single("image"), (req, res, next) => {
 
 //Create
 router.post(
-  "/create-product",
-  fileUploader.single("image"),
-  (req, res, next) => {
+  "/create-product", (req, res, next) => {
     console.log(req.body);
 
-    const { name, price, size, description, brand, category, available } =
+    const { name, price, size, description, brand, category, available, image } =
       req.body;
-
-    let image;
-    if (req.file) {
-      image = req.file.path;
-    }
 
     Product.create({
       name,
@@ -79,9 +72,7 @@ router.get("/products-list/:id", (req, res, next) => {
 });
 
 router.put(
-  "/products-list/:productId/",
-  fileUploader.single("image"),
-  (req, res, next) => {
+  "/products-list/:productId/",(req, res, next) => {
     const { productId } = req.params;
     const {
       name,
@@ -94,17 +85,13 @@ router.put(
       available,
     } = req.body;
 
-    let noImage;
-    if (req.file) {
-      image = req.file.path;
-    }
 
     let productToUpdate = {
       name,
       price,
       size,
       description,
-      image: noImage,
+      image,
       brand,
       category,
       available,

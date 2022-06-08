@@ -8,17 +8,17 @@ const { isAuthenticated } = require("../middleware/jwt.middleware");
 
 //Show the information of the cart
 router.get("/cart", isAuthenticated, (req, res, next) => {
-  const { _id } = req.payload;
+  const { _id, cart } = req.payload;
   const { product, owner } = req.body;
-  User.findById(_id)
-    .populate("cart")
-    .then((user) => {
-      res.status(200).json(user.cart);
+  Cart.findById(cart)
+    .populate("product")
+    .then((cart) => {
+      res.status(200).json(cart);
     })
     .catch((err) => res.status(400).json({ err }));
 });
 
-router.put("/cart/:productId", (req, res, next) => {
+router.put("/cart/:productId", isAuthenticated, (req, res, next) => {
   const { cart } = req.payload;
   const { productId } = req.params;
 
