@@ -23,38 +23,29 @@ router.post("/upload", fileUploader.single("image"), (req, res, next) => {
 });
 
 //Create
-router.post(
-  "/create-product",
-  fileUploader.single("image"),
-  (req, res, next) => {
-    console.log(req.body);
+router.post("/create-product", (req, res, next) => {
+  console.log(req.body);
 
-    const { name, price, size, description, brand, category, available } =
-      req.body;
+  const { name, price, size, description, brand, image, category, available } =
+    req.body;
 
-    let image;
-    if (req.file) {
-      image = req.file.path;
-    }
-
-    Product.create({
-      name,
-      price,
-      size,
-      description,
-      brand,
-      image,
-      category,
-      available,
+  Product.create({
+    name,
+    price,
+    size,
+    description,
+    brand,
+    image,
+    category,
+    available,
+  })
+    .then((newProduct) => {
+      return res.status(200).json(newProduct);
     })
-      .then((newProduct) => {
-        return res.status(200).json(newProduct);
-      })
-      .catch((err) =>
-        res.status(400).json({ message: "No Products were created" })
-      );
-  }
-);
+    .catch((err) =>
+      res.status(400).json({ message: "No Products were created" })
+    );
+});
 
 router.get("/products-list/category/:category", (req, res, next) => {
   const { category } = req.params;
@@ -78,53 +69,36 @@ router.get("/products-list/:id", (req, res, next) => {
     );
 });
 
-router.put(
-  "/products-list/:productId/",
-  fileUploader.single("image"),
-  (req, res, next) => {
-    const { productId } = req.params;
-    const {
-      name,
-      price,
-      size,
-      description,
-      image,
-      brand,
-      category,
-      available,
-    } = req.body;
+router.put("/products-list/:productId/", (req, res, next) => {
+  const { productId } = req.params;
+  const { name, price, size, description, image, brand, category, available } =
+    req.body;
 
-    let noImage;
-    if (req.file) {
-      image = req.file.path;
-    }
+  let productToUpdate = {
+    name,
+    price,
+    size,
+    description,
+    image,
+    brand,
+    category,
+    available,
+  };
+  Product.findByIdAndUpdate(productId, productToUpdate, { new: true })
 
-    let productToUpdate = {
-      name,
-      price,
-      size,
-      description,
-      image: noImage,
-      brand,
-      category,
-      available,
-    };
-    Product.findByIdAndUpdate(productId, productToUpdate, { new: true })
-
-      .then((modifiedProduct) => {
-        res.status(200).json(modifiedProduct);
-      })
-      .catch((err) => {
-        if (productId === undefined) {
-          res.status(400).json({ message: "Invalid ID supplied" });
-        } else if (!modifiedProduct) {
-          res.status(404).json({ message: "Product not found" });
-        } else {
-          res.status(405).json({ message: "Validation exception" });
-        }
-      });
-  }
-);
+    .then((modifiedProduct) => {
+      res.status(200).json(modifiedProduct);
+    })
+    .catch((err) => {
+      if (productId === undefined) {
+        res.status(400).json({ message: "Invalid ID supplied" });
+      } else if (!modifiedProduct) {
+        res.status(404).json({ message: "Product not found" });
+      } else {
+        res.status(405).json({ message: "Validation exception" });
+      }
+    });
+});
 
 router.delete("/products-list/:productId", (req, res, next) => {
   const { productId } = req.params;
